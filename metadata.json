@@ -1,0 +1,6 @@
+{
+  "name": "LEGACY Cybernetic Simulator",
+  "description": "Tactical feedback control board implementing the LEGACY v4.2 OODA closed-loop protocol and Bootstrap Swarm Compiler.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
