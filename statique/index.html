@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔥 FORGERON + SENTINEL SOUVERAIN (STANDALONE)</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#ff6b00">
+  <style>
+    :root {
+      --bg: #07080a;
+      --card: #0c0f14;
+      --border: #1f2720;
+      --border-accent: #3a4a3a;
+      --teal: #5ee052;
+      --orange: #ff6b00;
+      --gray: #6b7280;
+      --text: #d1d5db;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      padding: 20px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Subtle CRT grid pattern screen */
+    body::before {
+      content: " ";
+      display: block;
+      position: fixed;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      z-index: 99999;
+      background-size: 100% 4px, 6px 100%;
+      pointer-events: none;
+    }
+
+    header {
+      border-bottom: 2px dashed var(--border-accent);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    @media (min-width: 640px) {
+      header { flex-direction: row; align-items: flex-end; }
+    }
+
+    h1 {
+      color: var(--teal);
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .sub {
+      font-size: 10px;
+      color: var(--gray);
+      margin-top: 2px;
+      letter-spacing: .12em;
+    }
+
+    .badge-bar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 9px;
+      border: 1px solid var(--border-accent);
+      background-color: rgba(12, 15, 20, 0.6);
+      padding: 2px 8px;
+      color: var(--gray);
+      font-weight: bold;
+    }
+    .badge b { color: var(--teal); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 900px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .panel {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: .08em;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      color: var(--teal);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    p.panel-desc {
+      font-size: 10px;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      letter-spacing: .03em;
+    }
+
+    /* Buttons and Forms */
+    .button-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    button {
+      background: transparent;
+      border: 1px solid var(--teal);
+      color: var(--teal);
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      background-color: rgba(94, 224, 82, 0.1);
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+    button.accent {
+      background-color: var(--orange);
+      color: #000;
+      border-color: var(--orange);
+    }
+    button.accent:hover {
+      background-color: #e05e00;
+      color: #000;
+    }
+
+    input, textarea {
+      background-color: #050608;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 10.5px;
+      padding: 8px;
+      border-radius: 4px;
+      width: 100%;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 8.5px;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      letter-spacing: .08em;
+    }
+
+    /* Logs & Lists */
+    #consoleLog {
+      background-color: #040507;
+      border: 1px solid var(--border);
+      padding: 10px;
+      font-size: 10px;
+      height: 140px;
+      overflow-y: auto;
+      color: var(--text);
+      margin-top: 14px;
+    }
+    #consoleLog .err { color: #f87171; }
+    #consoleLog .wrn { color: #fbbf24; }
+    #consoleLog .ok { color: var(--teal); }
+
+    .search-results {
+      max-height: 120px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      background-color: #040507;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+    .search-item {
+      padding: 6px 10px;
+      font-size: 10px;
+      border-bottom: 1px solid #111;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .search-item:hover {
+      background-color: #121814;
+      color: var(--teal);
+    }
+    .search-item .badge-map {
+      background-color: #222;
+      color: #777;
+      font-size: 8px;
+      padding: 1px 4px;
+    }
+
+    .learned-pairs {
+      max-height: 140px;
+      overflow-y: auto;
+      margin-top: 12px;
+      font-size: 9px;
+    }
+    .learned-item {
+      padding: 5px 0;
+      border-bottom: 1px dashed #151a15;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .learned-item span.term { color: var(--orange); font-weight: bold; }
+    .learned-item span.path { color: var(--gray); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 70%; }
+
+    /* Canvas styling */
+    #sentinelCanvas {
+      width: 100%;
+      height: 380px;
+      background-color: #030405;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .telemetry-dashboard {
+      font-size: 10.5px;
+      background-color: #040507;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 14px;
+    }
+    .tel-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #111;
+      padding: 4px 0;
+    }
+    .tel-row:last-child { border-bottom: none; }
+    .tel-row span.label { color: var(--gray); text-transform: uppercase; }
+    .tel-row span.val { font-weight: bold; }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>🔥 FORGERON + SENTINEL</h1>
+      <div class="sub">INDEXEUR ET COUPLAGE GÉODÉSIQUE SOUVERAIN (STANDALONE V3)</div>
+    </div>
+    <div class="badge-bar">
+      <div class="badge">SANS CLIENT: <b>OK</b></div>
+      <div class="badge">ZÉRO NPM: <b>100% RETRO</b></div>
+      <div class="badge">STOCKAGE: <b>IndexedDB DB</b></div>
+    </div>
+  </header>
+
+  <div class="grid">
+    
+    <!-- LEFT PANEL: FORGERON FILE SCANNER AND SEED MEMORY -->
+    <div class="panel">
+      <div>
+        <h2>📁 INDEXATION LOCALE ET ANCRAGE SÉMANTIQUE</h2>
+        <p class="panel-desc">Scannez des dossiers locaux à la source ou ingestez manuellement des listes de chemins absolus.</p>
+        
+        <div class="button-row">
+          <button id="scanDirBtn" class="accent">📁 SCANNER DOSSIER LOCAL</button>
+          <button id="manualBtn">SAISIE MANUELLE</button>
+          <button id="scrapeFeedsBtn">📡 PARASITER LES FLUX SISMOLOGIQUES</button>
+        </div>
+
+        <div class="form-group" id="manualGroup" style="display-none; margin-top: 10px; display: none;">
+          <label>Collez des chemins absolus séparés par des lignes :</label>
+          <textarea id="manualTextarea" rows="4" placeholder="/home/username/documents/file1.txt"></textarea>
+          <button id="submitManualBtn" style="margin-top: 6px;">INGESTER LES CHEMINS</button>
+        </div>
+
+        <div class="form-group" style="margin-top:14px;">
+          <label>RECHERCHER ET CRÉER UN ANCRAGE INTERNE (AGI SOUVERAIN) :</label>
+          <input type="text" id="searchInput" placeholder="Saisir un mot-clé ou concept sémantique...">
+          
+          <div class="search-results" id="searchResults" style="display: none;"></div>
+        </div>
+
+        <div class="learned-pairs">
+          <label style="font-size: 8.5px; color: var(--gray); text-transform: uppercase; font-weight: bold;">MOTS SÉMANTIQUES MÉMORISÉS PAR L'AGI :</label>
+          <div id="learnedList"></div>
+        </div>
+      </div>
+
+      <div id="consoleLog">
+        <div class="ok">Atelier souverain initialisé. Prêt à indexer.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: SENTINEL VECTOR 3D GLOBE -->
+    <div class="panel">
+      <div>
+        <h2>🌍 JUMEAU COGNITIF SENTINEL-EARTH (TRIDIMENSIONNEL)</h2>
+        <p class="panel-desc">Rendu vectoriel direct du globe physique sans dépendances externes. Arcs de tension corrélés aux séismes (USGS).</p>
+        
+        <div class="telemetry-dashboard">
+          <div class="tel-row">
+            <span class="label">Activité Sismologique d'Intérêt (USGS M4.5+) :</span>
+            <span class="val" id="usgsCount" style="color: #f87171;">-- anomalie(s)</span>
+          </div>
+          <div class="tel-row">
+            <span class="label">Orages Électromagnétiques (NOAA SWPC Kp avg) :</span>
+            <span class="val" id="noaaCount" style="color: #fbbf24;">-- Kp</span>
+          </div>
+          <div class="tel-row">
+            <span class="label">Indice de Tension Géopolitique Résultant :</span>
+            <span class="val" id="climatScore" style="color: #ff6b00;">-- %</span>
+          </div>
+        </div>
+
+        <canvas id="sentinelCanvas"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { dbStore, localBus } from './bridge.js';
+    import { runLocalDirectoryScan, manualIngestPaths, searchIndexedFiles, learnSemanticAffinity, getSemanticMemory, scrapeTelemetryFeeds } from './forgeron.js';
+    import { GpsCanvasGlobe } from './sentinel.js';
+
+    // UI elements
+    const scanDirBtn = document.getElementById('scanDirBtn');
+    const manualBtn = document.getElementById('manualBtn');
+    const manualGroup = document.getElementById('manualGroup');
+    const textarea = document.getElementById('manualTextarea');
+    const submitManualBtn = document.getElementById('submitManualBtn');
+    const scrapeFeedsBtn = document.getElementById('scrapeFeedsBtn');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const learnedList = document.getElementById('learnedList');
+    const consoleLog = document.getElementById('consoleLog');
+
+    const usgsCountEl = document.getElementById('usgsCount');
+    const noaaCountEl = document.getElementById('noaaCount');
+    const climatScoreEl = document.getElementById('climatScore');
+
+    // Init custom canvas globe
+    const canvas = document.getElementById('sentinelCanvas');
+    const globe = new GpsCanvasGlobe(canvas);
+    
+    // Rendu en continu
+    function frame() {
+      globe.render();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // Logging helpers
+    function log(message, type = 'ok') {
+      const cls = type === 'error' ? 'err' : type === 'warn' ? 'wrn' : 'ok';
+      consoleLog.innerHTML += `<div class="${cls}">[${new Date().toLocaleTimeString()}] ${message}</div>`;
+      consoleLog.scrollTop = consoleLog.scrollHeight;
+    }
+
+    // Toggle manual container
+    manualBtn.addEventListener('click', () => {
+      manualGroup.style.display = manualGroup.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Start directory scan
+    scanDirBtn.addEventListener('click', async () => {
+      log("DÉMARRAGE DE L'INDEXATION DU DOSSIER RECURSIF...", 'warn');
+      try {
+        const files = await runLocalDirectoryScan();
+        log(`SUCCÈS D'INDEXATION : ${files.length} fichiers stockés dans IndexedDB.`, 'ok');
+      } catch(e) {
+        log(`ÉCHEC D'INDEXATION : ${e.message}`, 'error');
+      }
+    });
+
+    // Submit manual roads
+    submitManualBtn.addEventListener('click', async () => {
+      const text = textarea.value;
+      if (!text.trim()) return;
+      try {
+        const files = await manualIngestPaths(text);
+        log(`INGESTION MANUELLE : ${files.length} chemins injectés avec succès.`, 'ok');
+        textarea.value = '';
+        manualGroup.style.display = 'none';
+      } catch(e) {
+        log(`ÉCHEC DE L'INGESTION : ${e.message}`, 'error');
+      }
+    });
+
+    // Scrape earthquakes & weather feeds
+    scrapeFeedsBtn.addEventListener('click', async () => {
+      log("DÉMARRAGE DU PARASITISME SUR LE CLOUD PUBLIC...", 'warn');
+      try {
+        const out = await scrapeTelemetryFeeds();
+        log(`EXTRACTION TERMINEE. Conflit: ${(out.conflictScore*100).toFixed(0)}%, Solaire: ${(out.magneticScore*9).toFixed(1)} Kp`, 'ok');
+      } catch(e) {
+        log(`ÉCHEC D'EXTRACTION : ${e.message}`, 'error');
+      }
+    });
+
+    // Dynamic search and mapping creation
+    searchInput.addEventListener('input', async (e) => {
+      const q = e.target.value;
+      if (q.length < 2) {
+        searchResults.style.display = 'none';
+        return;
+      }
+      const matches = await searchIndexedFiles(q);
+      if (matches.length > 0) {
+        searchResults.innerHTML = matches.slice(0, 10).map(f => `
+          <div class="search-item" data-path="${f.path}" data-name="${f.name}">
+            <span style="font-weight: bold; color: var(--teal);">${f.name}</span>
+            <span class="badge-map">ASSOCIER</span>
+          </div>
+        `).join('');
+        searchResults.style.display = 'block';
+      } else {
+        searchResults.innerHTML = `<div style="padding: 10px; color: var(--gray); text-align: center;">Aucun fichier correspondant. Scannez un dossier d'abord.</div>`;
+        searchResults.style.display = 'block';
+      }
+    });
+
+    // Select mapping search item
+    searchResults.addEventListener('click', async (e) => {
+      const item = e.target.closest('.search-item');
+      if (!item) return;
+
+      const path = item.getAttribute('data-path');
+      const name = item.getAttribute('data-name');
+      const term = searchInput.value;
+
+      try {
+        await learnSemanticAffinity(term, path, name);
+        log(`ANCRAGE CRÉÉ : '${term}' ➔ [${name}]`, 'ok');
+        navigator.clipboard.writeText(path);
+        log(`CHEMIN COPIÉ DANS LE PRESSE-PAPIERS.`, 'ok');
+        
+        searchInput.value = '';
+        searchResults.style.display = 'none';
+        await loadLearnedList();
+      } catch(err) {
+        log(`ÉCHEC DE L'ANCRAGE : ${err.message}`, 'error');
+      }
+    });
+
+    // Populate learned association registry from IndexedDB
+    async function loadLearnedList() {
+      const pairs = await getSemanticMemory();
+      if (pairs.length > 0) {
+        learnedList.innerHTML = pairs.slice(-10).map(p => `
+          <div class="learned-item">
+            <span class="term">"${p.term}"</span>
+            <span>➔</span>
+            <span class="path" title="${p.path}">${p.name} (w:${p.count})</span>
+          </div>
+        `).join('');
+      } else {
+        learnedList.innerHTML = `<div style="color:#444; italic">Aucun ancrage sémantique enregistré.</div>`;
+      }
+    }
+
+    // Handle bus broadcast messages
+    localBus.onmessage = (e) => {
+      if (e.data.type === 'tension') {
+        const { conflict, solar, status } = e.data;
+        globe.updateTension(conflict, solar);
+        
+        usgsCountEl.textContent = `${status.usgs} anomalie(s) active(s)`;
+        noaaCountEl.textContent = `${status.noaa.toFixed(2)} Kp`;
+        climatScoreEl.textContent = `${(conflict * 100).toFixed(0)} %`;
+      }
+    };
+
+    // Auto-run first load
+    window.onload = async () => {
+      await loadLearnedList();
+      
+      // Auto register service worker for offline
+      if ('serviceWorker' in navigator) {
+        try {
+          await navigator.serviceWorker.register('./sw.js');
+          log("BOUTIQUE OFFLINE DE CHROMEBOOK VALIDEE (SW EN SERVICE).");
+        } catch(e) {
+          console.warn("Échec d'enregistrement du Service Worker", e);
+        }
+      }
+
+      // Initial feed retrieval to populate dashboard
+      try {
+        await scrapeTelemetryFeeds();
+      } catch(e) {}
+    };
+
+  </script>
+</body>
+</html>
